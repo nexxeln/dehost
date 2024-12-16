@@ -10242,7 +10242,10 @@ snapshots:
   postgres-date@2.1.0: {}
   postgres-interval@3.0.0: {}
   postgres-range@1.1.4: {}
-  postgres@3.4.5: {}
+
+  postgres@3.4.5:
+    optional: true
+
   preact@10.25.2: {}
   prettier@3.3.3: {}
   process-warning@1.0.0: {}
