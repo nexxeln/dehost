@@ -97,6 +97,40 @@ class AuthCLI {
     }
   }
 
+  async checkVerificationStatus(code) {
+    try {
+      const response = await fetch('http://localhost:3000/api/isVerified', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+
+      const data = await response.json();
+      return data.status === 'success';
+    } catch (error) {
+      console.error('Error checking verification status:', error);
+      return false;
+    }
+  }
+
+  async pollVerification(code) {
+    return new Promise((resolve, reject) => {
+      const interval = setInterval(async () => {
+        const isVerified = await this.checkVerificationStatus(code);
+        if (isVerified) {
+          clearInterval(interval);
+          resolve(true);
+        }
+      }, 5000); // Check every 5 seconds
+
+      // Set a timeout of 60 seconds
+      setTimeout(() => {
+        clearInterval(interval);
+        reject(new Error('Verification timed out'));
+      }, 60000);
+    });
+  }
+
   async runAuthCLI() {
     this.setupExitHandlers();
 
@@ -135,15 +169,15 @@ class AuthCLI {
 
       console.log('Waiting for confirmation from the website...');
 
-      // Step 5: Wait for the callback with login status
-      const loginStatus = await Promise.race([
-        this.authPromise,
+      // Step 5: Wait for verification
+      const verificationStatus = await Promise.race([
+        this.pollVerification(code),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Authentication timed out')), 60000)
         ),
       ]);
 
-      if (loginStatus === 'success') {
+      if (verificationStatus) {
         outro('Authentication successful! You are now logged in. 🎉');
       } else {
         throw new Error('Authentication failed.');
