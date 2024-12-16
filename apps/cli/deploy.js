@@ -6,7 +6,6 @@ import chalk from 'chalk';
 import process from 'process';
 
 export class DeploymentCLI {
-  // Framework Detection Method
   detectFramework() {
     const projectPath = process.cwd();
     const packageJsonPath = path.join(projectPath, 'package.json');
@@ -32,55 +31,85 @@ export class DeploymentCLI {
     }
   }
 
-  // Deployment Method
-  deployProject(framework) {
+  async deployProject(framework) {
     const projectPath = process.cwd();
-    const sp = spinner();
 
     try {
-      sp.start(`Building the ${framework} project...`);
-
-      // Framework-specific build commands
-      switch (framework) {
-        case 'Next.js':
-        case 'React':
-        case 'Vue':
-          execSync('npm install', { cwd: projectPath, stdio: 'inherit' });
-          execSync('npm run build', { cwd: projectPath, stdio: 'inherit' });
-          break;
-        case 'Vanilla':
-          execSync('zip -r dist.zip .', { cwd: projectPath, stdio: 'inherit' });
-          break;
+      // Install dependencies
+      const s = spinner();
+      s.start('Installing dependencies...');
+      try {
+        execSync('npm install', { 
+          cwd: projectPath,
+          stdio: 'ignore' 
+        });
+        s.stop(chalk.green('Dependencies installed'));
+      } catch (error) {
+        s.stop(chalk.red('Failed to install dependencies'));
+        throw error;
       }
 
-      sp.stop(`${framework} project built successfully!`);
-      console.log(chalk.green(`✓ ${framework} project is ready for deployment.`));
+      // Build project
+      const buildSpinner = spinner();
+      buildSpinner.start(`Building ${framework} project...`);
+      try {
+        execSync('npm run build', { 
+          cwd: projectPath,
+          stdio: 'ignore' 
+        });
+        buildSpinner.stop(chalk.green(`${framework} build completed`));
+      } catch (error) {
+        buildSpinner.stop(chalk.red('Build failed'));
+        throw error;
+      }
+
+      // Package vanilla project if applicable
+      if (framework === 'Vanilla') {
+        const packageSpinner = spinner();
+        packageSpinner.start('Packaging vanilla project...');
+        try {
+          execSync('zip -r dist.zip .', { 
+            cwd: projectPath,
+            stdio: 'ignore' 
+          });
+          packageSpinner.stop(chalk.green('Project packaged successfully'));
+        } catch (error) {
+          packageSpinner.stop(chalk.red('Packaging failed'));
+          throw error;
+        }
+      }
+
+      console.log(chalk.green(`\n✓ ${framework} project is ready for deployment.`));
     } catch (error) {
-      sp.stop('Build failed');
-      console.error(chalk.red('Build error:'), error);
+      console.error(chalk.red('\nError during deployment:'), error.message);
+      process.exit(1);
     }
   }
 
-  // Main CLI Logic
   async runDeployCLI() {
-    intro('Dehost Deployment CLI 🚀');
+    intro(chalk.bold('Dehost Deployment CLI 🚀'));
 
     const framework = this.detectFramework();
     if (!framework) {
-      console.error(chalk.red('No supported framework detected.'));
+      console.error(chalk.red('\nNo supported framework detected.'));
       outro('Deployment failed.');
       return;
     }
 
-    console.log(chalk.blue(`Detected framework: ${framework}`));
-    this.deployProject(framework);
+    console.log(chalk.blue(`\nDetected framework: ${framework}`));
+    await this.deployProject(framework);
 
-    outro(`${framework} project deployment process completed! 🎉`);
+    outro(chalk.green(`\n${framework} project deployment process completed! 🎉`));
   }
 }
 
-// Execute the CLI
-const cli = new DeploymentCLI();
-cli.runDeployCLI().catch(console.error);
+// Only execute if this is the main module
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const cli = new DeploymentCLI();
+  cli.runDeployCLI().catch(error => {
+    console.error(chalk.red('\nUnexpected error:'), error);
+    process.exit(1);
+  });
+}
 
 export default DeploymentCLI;
