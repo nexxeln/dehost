@@ -35,7 +35,7 @@ export default function Navbar() {
   return (
     <nav className="flex justify-between items-center mb-1 py-2 pt-4 px-4 md:px-8 lg:px-16">
       <div className="flex items-center">
-        <h1 className="text-xl font-bold">DeHost</h1>
+        <Link href="/" className="text-xl font-bold hover:text-primary">DeHost</Link>
       </div>
 
       <div className="hidden md:flex items-center space-x-4">

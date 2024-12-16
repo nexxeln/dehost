@@ -101,6 +101,7 @@ export default function VerifyCode() {
   
       if (result.status === "verified") {
         setSuccess(true);
+        window.close();
         // setTimeout(() => router.push("/dashboard"), 1500);
       } else {
         throw new Error("Verification failed");
