@@ -23,9 +23,9 @@ export default function VerifyCode() {
 
   async function checkUser() {
     const userId = localStorage.getItem("userId");
-    if (!userId) {
-      router.push("/signin");
-    }
+    // if (!userId) {
+    //   router.push("/signin");
+    // }
   }
 
   async function verifyCode() {
