@@ -1,11 +1,10 @@
 {
   "type": "module",
   "name": "dehost",
-  "version": "1.0.0",
-  "description": "",
-  "main": "deploy.js",
+  "version": "0.1.0",
+  "main": "cli.js",
   "bin": {
-    "deploy-cli": "./deploy.js"
+    "dehost": "cli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,5 +19,7 @@
     "chalk": "^5.3.0",
     "node-fetch": "^3.3.2",
     "open": "^10.1.0"
-  }
+  },
+  "devDependencies": {},
+  "description": ""
 }

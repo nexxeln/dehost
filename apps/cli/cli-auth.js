@@ -4,7 +4,7 @@ import http from 'http';
 import process from 'process';
 import fetch from 'node-fetch';  // To send HTTP requests
 
-class AuthCLI {
+export class AuthCLI {
   constructor() {
     this.server = null;
     this.authPromise = null;
@@ -191,6 +191,4 @@ class AuthCLI {
   }
 }
 
-// Run the CLI
-const cli = new AuthCLI();
-cli.runAuthCLI().catch(console.error);
+export default AuthCLI;
