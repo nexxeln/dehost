@@ -53,6 +53,7 @@ export const VerificationCodes = pgTable("verification_codes", {
   userId: integer("user_id").references(() => Users.id),
   isVerified: boolean("is_verified").notNull().default(false),
   code: varchar("code", { length: 6 }).notNull(),
+  authId: varchar("auth_id", { length: 255 }), // Add this line
   createdAt: timestamp("created_at").defaultNow(),
   expiresAt: timestamp("expires_at").notNull(),
 });
