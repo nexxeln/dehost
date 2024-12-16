@@ -1,13 +1,34 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { createOrUpdateUser } from "@/lib/actions";
 import { usePrivy } from "@privy-io/react-auth";
 import { LogIn } from "lucide-react";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Navbar() {
   const { login, logout, authenticated, user } = usePrivy();
+
+  useEffect(() => {
+    if (authenticated && user) {
+      handleUserAuthenticated();
+    }
+  }, [authenticated, user]);
+
+  const handleUserAuthenticated = async () => {
+    if (user && user.wallet?.address) {
+      try {
+        await createOrUpdateUser(
+          user.wallet.address,
+          user.email?.address ?? ""
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   const handleAuth = () => (authenticated ? logout() : login());
 
