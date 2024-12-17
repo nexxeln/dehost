@@ -11,11 +11,11 @@ const __dirname = path.dirname(__filename);
 class DehostCLI {
     // 'Dehost' ASCII Art
     static dehostArt = `
-   DDDD   EEEEE  H   H  OOO   SSSS  TTTTT
-   D   D  E      H   H O   O S        T
-   D   D  EEEE   HHHHH O   O  SSS     T
-   D   D  E      H   H O   O     S     T
-   DDDD   EEEEE  H   H  OOO   SSSS    T
+   SHREYA   EEEEE   H   H   OOO    SSSS  NEXXEL
+   D     D  E       H   H  O   O  S        T
+   D     D  EEEE    ARNAV  O   O   SSS     T
+   D     D  E       H   H  O   O      S    T
+   DDDDDD   KARAN   H   H   OOO    SSSS    T
   `;
 
     // Handle 'deploy' command
